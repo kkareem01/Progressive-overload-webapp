@@ -239,8 +239,8 @@ body {
 
 .steppers {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 14px;
 }
 .stepper label {
   display: block;
@@ -252,13 +252,13 @@ body {
 }
 .stepper .row {
   display: grid;
-  grid-template-columns: var(--tap) 1fr var(--tap);
-  gap: 6px;
+  grid-template-columns: var(--tap) minmax(0, 1fr) var(--tap);
+  gap: 8px;
 }
 .stepper .row.small {
   grid-template-columns: 1fr 1fr;
   margin-top: 6px;
-  gap: 6px;
+  gap: 8px;
 }
 .bigbtn, .smallbtn, .logbtn {
   appearance: none;
@@ -275,18 +275,30 @@ body {
 .bigbtn:active, .smallbtn:active { background: var(--bg-elev-2); }
 
 .stepper input {
+  appearance: none;
+  -webkit-appearance: none;
   height: var(--tap);
   width: 100%;
+  min-width: 0;
+  padding: 0 8px;
+  margin: 0;
   border: 1px solid var(--line);
   background: var(--bg);
   color: var(--text);
   text-align: center;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
+  line-height: 1;
   border-radius: 12px;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
 }
 .stepper input:focus { outline: 2px solid var(--accent); }
+.stepper input::-webkit-outer-spin-button,
+.stepper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
 .logbtn {
   height: 60px;

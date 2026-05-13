@@ -1,38 +1,38 @@
-const API = '/api/sets';
+/**
+ * Local data layer. Same exported shape as the old fetch wrappers,
+ * but backed entirely by localStorage via store.js. No network.
+ */
+import { readCachedSets } from './store.js';
 
-async function request(method, path, body) {
-  const opts = {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-  };
-  if (body !== undefined) opts.body = JSON.stringify(body);
-  const res = await fetch(path, opts);
-  let payload;
-  try { payload = await res.json(); }
-  catch { throw new Error(`bad response (${res.status})`); }
-  if (!res.ok || payload?.success === false) {
-    throw new Error(payload?.error || `request failed (${res.status})`);
+export function listSets({ exercise, since, limit = 500 } = {}) {
+  let sets = readCachedSets(exercise);
+  if (since) {
+    const sinceTs = new Date(since).getTime();
+    sets = sets.filter((s) => new Date(s.performed_at).getTime() >= sinceTs);
   }
-  return payload.data;
-}
-
-export function listSets({ exercise, since, limit } = {}) {
-  const qs = new URLSearchParams();
-  if (exercise) qs.set('exercise', exercise);
-  if (since)    qs.set('since', since);
-  if (limit)    qs.set('limit', String(limit));
-  const path = qs.toString() ? `${API}?${qs}` : API;
-  return request('GET', path);
+  return Promise.resolve(sets.slice(0, limit));
 }
 
 export function createSet({ exercise, weight, reps, notes }) {
-  return request('POST', API, { exercise, weight, reps, notes });
+  const w = Number(weight);
+  const r = Number.parseInt(reps, 10);
+  if (!Number.isFinite(w) || w < 0 || w > 9999) {
+    return Promise.reject(new Error('weight must be 0–9999'));
+  }
+  if (!Number.isInteger(r) || r < 1 || r > 999) {
+    return Promise.reject(new Error('reps must be 1–999'));
+  }
+  const saved = {
+    id: `loc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    exercise,
+    weight: w,
+    reps: r,
+    performed_at: new Date().toISOString(),
+    notes: notes ?? null,
+  };
+  return Promise.resolve(saved);
 }
 
-export function updateSet(id, patch) {
-  return request('PATCH', `${API}?id=${encodeURIComponent(id)}`, patch);
-}
-
-export function deleteSet(id) {
-  return request('DELETE', `${API}?id=${encodeURIComponent(id)}`);
+export function deleteSet(_id) {
+  return Promise.resolve({ id: _id });
 }

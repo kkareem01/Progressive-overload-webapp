@@ -1,7 +1,7 @@
 import { listSets, createSet, deleteSet } from '../api.js';
 import {
   cacheSets, readCachedSets, appendCachedSet, removeCachedSet,
-  enqueue, newTempId,
+  newTempId,
 } from '../store.js';
 import { annotatePrs, prTagsFor } from '../pr.js';
 import {
@@ -185,16 +185,18 @@ function buildLogger(exercise, { onTitle, onBack }) {
 
     try {
       const saved = await createSet({ exercise, weight, reps });
-      // swap temp → real
       state.sets = state.sets.map((s) => (s.id === tempId ? saved : s));
       appendCachedSet(exercise, saved);
       recomputePrs();
       refreshLists();
       setStatus('ok', 'saved');
     } catch (err) {
-      console.warn('createSet failed', err);
-      enqueue({ tempId, exercise, weight, reps });
-      setStatus('queued', 'queued offline');
+      // validation failure — undo optimistic insert
+      state.sets = state.sets.filter((s) => s.id !== tempId);
+      state.prTagsById.delete(tempId);
+      recomputePrs();
+      refreshLists();
+      setStatus('error', err.message || 'save failed');
     }
   }
 

@@ -1,6 +1,6 @@
 /* Overload service worker — cache the app shell, never cache API. */
 
-const VERSION = 'overload-v2';
+const VERSION = 'overload-v3';
 const SHELL = [
   '/',
   '/index.html',

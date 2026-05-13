@@ -1,10 +1,8 @@
 import { DAYS, EXERCISE_TO_DAY } from './exercises.js';
 import { renderDay } from './views/day.js';
 import { renderLogger } from './views/logger.js';
-import { readQueue, dequeueById } from './store.js';
-import { createSet } from './api.js';
-import { setStatus, clearStatus } from './status.js';
-import { el, fragmentFromTemplate } from './util.js';
+import { clearStatus } from './status.js';
+import { fragmentFromTemplate } from './util.js';
 
 const view    = document.getElementById('view');
 const title   = document.getElementById('title');
@@ -91,27 +89,6 @@ function renderLoggerView(exercise) {
   });
 }
 
-/* ---------- offline queue flush ---------- */
-
-async function flushQueue() {
-  const queued = readQueue();
-  if (queued.length === 0) return;
-  setStatus('queued', `syncing ${queued.length}`, { sticky: true });
-  let okCount = 0;
-  for (const item of queued) {
-    try {
-      await createSet({ exercise: item.exercise, weight: item.weight, reps: item.reps, notes: item.notes });
-      dequeueById(item.tempId);
-      okCount++;
-    } catch {
-      // stop on first failure to preserve order
-      setStatus('error', 'sync failed');
-      return;
-    }
-  }
-  setStatus('ok', `synced ${okCount}`);
-}
-
 /* ---------- wire up ---------- */
 
 backBtn.addEventListener('click', () => {
@@ -122,11 +99,8 @@ backBtn.addEventListener('click', () => {
 
 window.addEventListener('popstate', resolveRoute);
 window.addEventListener('hashchange', resolveRoute);
-window.addEventListener('online', flushQueue);
-window.addEventListener('focus', flushQueue);
 
 resolveRoute();
-flushQueue();
 clearStatus();
 
 // PWA service worker

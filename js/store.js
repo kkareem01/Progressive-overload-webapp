@@ -1,10 +1,9 @@
 /**
- * Tiny localStorage cache + offline write queue.
+ * localStorage-backed store. Per-exercise list of sets is the source of truth.
  * All updates return new objects/arrays — no in-place mutation.
  */
 
-const CACHE_PREFIX  = 'overload:cache:';
-const QUEUE_KEY     = 'overload:queue';
+const CACHE_PREFIX = 'overload:cache:';
 
 function safeGet(key) {
   try {
@@ -18,7 +17,7 @@ function safeSet(key, value) {
   catch (err) { console.warn('localStorage set failed', err); }
 }
 
-/* ---------- per-exercise cache of recent sets ---------- */
+/* ---------- per-exercise list of sets ---------- */
 
 export function cacheSets(exercise, sets) {
   safeSet(CACHE_PREFIX + exercise, { fetchedAt: Date.now(), sets });
@@ -42,28 +41,6 @@ export function removeCachedSet(exercise, id) {
 export function replaceCachedSet(exercise, updated) {
   const existing = readCachedSets(exercise);
   cacheSets(exercise, existing.map((s) => (s.id === updated.id ? updated : s)));
-}
-
-/* ---------- offline write queue ---------- */
-
-export function readQueue() {
-  return safeGet(QUEUE_KEY) ?? [];
-}
-
-export function enqueue(item) {
-  const next = [...readQueue(), { ...item, queuedAt: Date.now() }];
-  safeSet(QUEUE_KEY, next);
-  return next;
-}
-
-export function dequeueById(tempId) {
-  const next = readQueue().filter((q) => q.tempId !== tempId);
-  safeSet(QUEUE_KEY, next);
-  return next;
-}
-
-export function clearQueue() {
-  safeSet(QUEUE_KEY, []);
 }
 
 /* ---------- helpers ---------- */

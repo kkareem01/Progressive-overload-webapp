@@ -1,13 +1,6 @@
 {
   "name": "progressive-overload-tracker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Personal hypertrophy tracking app — log weight x reps, see PRs and progress.",
-  "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod"
-  },
-  "dependencies": {
-    "@vercel/postgres": "^0.10.0"
-  }
+  "description": "Personal hypertrophy tracker — log weight × reps, see PRs and progress. localStorage-only PWA."
 }

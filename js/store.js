@@ -5,7 +5,6 @@
 
 const CACHE_PREFIX  = 'overload:cache:';
 const QUEUE_KEY     = 'overload:queue';
-const TIMER_DEFAULT = 'overload:timer-default';
 
 function safeGet(key) {
   try {
@@ -65,16 +64,6 @@ export function dequeueById(tempId) {
 
 export function clearQueue() {
   safeSet(QUEUE_KEY, []);
-}
-
-/* ---------- user prefs ---------- */
-
-export function getDefaultRest() {
-  return safeGet(TIMER_DEFAULT) ?? 120;
-}
-
-export function setDefaultRest(seconds) {
-  safeSet(TIMER_DEFAULT, seconds);
 }
 
 /* ---------- helpers ---------- */

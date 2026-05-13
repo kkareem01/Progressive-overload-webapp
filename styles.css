@@ -313,23 +313,6 @@ body {
 
 .tabpane[hidden] { display: none; }
 
-/* TIMER */
-.timer-box {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  background: var(--bg-elev-2);
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  padding: 10px 14px;
-  position: sticky;
-  top: 56px;
-  z-index: 4;
-}
-.timer-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; }
-.timer-time { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--accent); }
-
 /* CHART */
 #chart { width: 100% !important; max-width: 100%; }
 

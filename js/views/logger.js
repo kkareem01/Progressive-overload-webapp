@@ -1,10 +1,9 @@
 import { listSets, createSet, deleteSet } from '../api.js';
 import {
   cacheSets, readCachedSets, appendCachedSet, removeCachedSet,
-  enqueue, newTempId, getDefaultRest,
+  enqueue, newTempId,
 } from '../store.js';
 import { annotatePrs, prTagsFor } from '../pr.js';
-import { startTimer, stopTimer, onTick, formatTime, isRunning } from '../timer.js';
 import {
   el, fragmentFromTemplate, formatSet, formatShortDate,
   groupByDay, todayKey, localDateKey,
@@ -92,23 +91,6 @@ function buildLogger(exercise, { onTitle, onBack }) {
       if (!Number.isFinite(n) || n < 0) inp.value = inp === weightInput ? '0' : '1';
     });
   });
-
-  // Timer wiring
-  const timerBox  = root.querySelector('#timer-box');
-  const timerTime = root.querySelector('#timer-time');
-  root.querySelector('#timer-stop').addEventListener('click', () => stopTimer());
-  const unsubTimer = onTick((rem) => {
-    if (rem > 0 || isRunning()) {
-      timerBox.hidden = false;
-      timerTime.textContent = formatTime(rem);
-    } else {
-      timerBox.hidden = true;
-    }
-  });
-
-  // Back override (so we can clean up timer subscription)
-  root.dataset.cleanup = '1';
-  root._cleanup = () => { unsubTimer(); };
 
   // Log button
   root.querySelector('#log-set').addEventListener('click', onLogSet);
@@ -200,7 +182,6 @@ function buildLogger(exercise, { onTitle, onBack }) {
     refreshLists();
 
     if (navigator.vibrate) navigator.vibrate(15);
-    startTimer(getDefaultRest());
 
     try {
       const saved = await createSet({ exercise, weight, reps });
@@ -258,9 +239,6 @@ function buildLogger(exercise, { onTitle, onBack }) {
 }
 
 export function renderLogger(container, exercise, ctx) {
-  // call cleanup on any prior view
-  if (container._cleanupCurrent) try { container._cleanupCurrent(); } catch {}
   const root = buildLogger(exercise, ctx);
   container.replaceChildren(root);
-  container._cleanupCurrent = root._cleanup;
 }

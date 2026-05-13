@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0b0d12"/>
+  <g fill="#ffb84d">
+    <!-- dumbbell -->
+    <rect x="56"  y="216" width="56"  height="80"  rx="14"/>
+    <rect x="32"  y="192" width="32"  height="128" rx="12"/>
+    <rect x="400" y="216" width="56"  height="80"  rx="14"/>
+    <rect x="448" y="192" width="32"  height="128" rx="12"/>
+    <rect x="112" y="244" width="288" height="24"  rx="12"/>
+  </g>
+  <g fill="#e8ecf2">
+    <!-- ↑ progress arrow -->
+    <path d="M196 360 l60 -90 60 90 -36 0 0 60 -48 0 0 -60 z"/>
+  </g>
+</svg>
